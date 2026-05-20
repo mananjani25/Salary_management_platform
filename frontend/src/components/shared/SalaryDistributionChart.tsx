@@ -6,13 +6,14 @@ import type { DistributionBucket } from "../../types/insights";
 
 type SalaryDistributionChartProps = {
   buckets: DistributionBucket[];
+  title?: string;
   "data-testid"?: string;
 };
 
-export default function SalaryDistributionChart({ buckets, "data-testid": dataTestId }: SalaryDistributionChartProps) {
+export default function SalaryDistributionChart({ buckets, title = "Salary Distribution", "data-testid": dataTestId }: SalaryDistributionChartProps) {
   return (
     <div data-testid={dataTestId} className="rounded-lg border p-4">
-      <h2 className="mb-4 text-lg font-semibold">Salary Distribution</h2>
+      <h2 className="mb-4 text-lg font-semibold">{title}</h2>
       <div className="h-72 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={buckets}>

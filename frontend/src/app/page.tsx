@@ -30,7 +30,7 @@ export default function DashboardPage() {
       <div data-testid="dashboard-skeleton" className="space-y-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, idx) => (
-            <div key={idx} className="h-24 animate-pulse rounded-lg bg-gray-200" />
+            <div key={idx} data-testid="dashboard-stat-skeleton" className="h-24 animate-pulse rounded-lg bg-gray-200" />
           ))}
         </div>
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
@@ -46,19 +46,16 @@ export default function DashboardPage() {
       <h1 className="text-2xl font-semibold">Dashboard</h1>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard title="Total Employees" value={summary?.total_employees ?? 0} />
+        <StatCard title="Total Employees" value={`${summary?.total_employees ?? 0} employees`} />
         <StatCard title="Active Employees" value={summary?.active_employees ?? 0} />
-        <StatCard
-          title="Average Salary"
-          value={`$${Math.round(summary?.global_avg_salary ?? 0).toLocaleString("en-US")}`}
-        />
-        <StatCard title="Median Salary" value={`$${Math.round(summary?.median_salary ?? 0).toLocaleString("en-US")}`} />
+        <StatCard title="Average Salary" value={`$${(summary?.global_avg_salary ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} />
+        <StatCard title="Total Salary Spend" value={`$${Math.round(summary?.total_salary_spend ?? 0).toLocaleString("en-US")}`} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <SalaryBarChart
           data-testid="salary-by-country-chart"
-          title="Average Salary by Country"
+          title="Salary by Country"
           data={(countryData?.data ?? []).map((row) => ({
             name: row.country,
             value: row.avg_salary,
@@ -66,6 +63,7 @@ export default function DashboardPage() {
         />
         <SalaryDistributionChart
           data-testid="salary-distribution-chart"
+          title="Salary Distribution (All Employees)"
           buckets={distributionData?.buckets ?? []}
         />
       </div>
