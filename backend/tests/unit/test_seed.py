@@ -1,5 +1,11 @@
 from pathlib import Path
+import time
 
+from sqlalchemy import create_engine
+from sqlalchemy.pool import StaticPool
+
+from app.database import Base
+from app.models.employee import Employee
 from scripts.seed import (
     generate_email,
     generate_employee_id,
@@ -83,3 +89,22 @@ def test_status_distribution_approx_2_percent_inactive():
     records = [generate_employee_record(i + 1, ["Jane"], ["Doe"], set()) for i in range(500)]
     inactive_count = sum(1 for record in records if record["status"] == "Inactive")
     assert 0 < inactive_count < 50
+
+
+def test_bulk_insert_1000_records_under_2_seconds():
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    Base.metadata.create_all(bind=engine)
+
+    seen_emails = set()
+    records = [generate_employee_record(i + 1, ["Jane"], ["Doe"], seen_emails) for i in range(1000)]
+
+    start = time.perf_counter()
+    with engine.begin() as conn:
+        conn.execute(Employee.__table__.insert(), records)
+    elapsed = time.perf_counter() - start
+
+    assert elapsed < 2.0
