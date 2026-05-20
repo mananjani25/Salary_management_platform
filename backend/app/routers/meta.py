@@ -2,11 +2,12 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.schemas.insights import MetaFiltersResponse
 from app.services.insights_service import get_meta_filters
 
 router = APIRouter(prefix="/meta", tags=["meta"])
 
 
-@router.get("/filters")
+@router.get("/filters", response_model=MetaFiltersResponse)
 def filters_endpoint(db: Session = Depends(get_db)):
     return get_meta_filters(db)

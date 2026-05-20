@@ -2,6 +2,14 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.schemas.insights import (
+    CountryInsightResponse,
+    DepartmentInsightResponse,
+    JobTitleInsightResponse,
+    SalaryDistributionResponse,
+    SummaryResponse,
+    TopPaidResponse,
+)
 from app.services.insights_service import (
     get_by_country,
     get_by_department,
@@ -14,17 +22,17 @@ from app.services.insights_service import (
 router = APIRouter(prefix="/insights", tags=["insights"])
 
 
-@router.get("/summary")
+@router.get("/summary", response_model=SummaryResponse)
 def summary_endpoint(db: Session = Depends(get_db)):
     return get_summary(db)
 
 
-@router.get("/by-country")
+@router.get("/by-country", response_model=CountryInsightResponse)
 def by_country_endpoint(country: str | None = None, db: Session = Depends(get_db)):
     return get_by_country(db, country)
 
 
-@router.get("/by-job-title")
+@router.get("/by-job-title", response_model=JobTitleInsightResponse)
 def by_job_title_endpoint(
     country: str | None = None,
     job_title: str | None = None,
@@ -33,12 +41,12 @@ def by_job_title_endpoint(
     return get_by_job_title(db, country, job_title)
 
 
-@router.get("/by-department")
+@router.get("/by-department", response_model=DepartmentInsightResponse)
 def by_department_endpoint(db: Session = Depends(get_db)):
     return get_by_department(db)
 
 
-@router.get("/salary-distribution")
+@router.get("/salary-distribution", response_model=SalaryDistributionResponse)
 def salary_distribution_endpoint(
     country: str | None = None,
     job_title: str | None = None,
@@ -47,7 +55,7 @@ def salary_distribution_endpoint(
     return get_salary_distribution(db, country, job_title)
 
 
-@router.get("/top-paid")
+@router.get("/top-paid", response_model=TopPaidResponse)
 def top_paid_endpoint(
     limit: int = Query(default=10, ge=1),
     country: str | None = None,
