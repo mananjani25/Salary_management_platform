@@ -20,30 +20,37 @@ test("renders_four_stat_cards", async () => {
   await waitFor(() => {
     expect(screen.getAllByTestId("stat-card")).toHaveLength(4);
   });
+
+  expect(screen.getByText("Total Employees")).toBeInTheDocument();
+  expect(screen.getByText("Active Employees")).toBeInTheDocument();
+  expect(screen.getByText("Average Salary")).toBeInTheDocument();
+  expect(screen.getByText("Total Salary Spend")).toBeInTheDocument();
 });
 
 test("total_employees_stat_shows_value", async () => {
   renderDashboard();
 
-  expect(await screen.findByText("5")).toBeInTheDocument();
+  expect(await screen.findByText("5 employees")).toBeInTheDocument();
 });
 
 test("avg_salary_formatted_as_currency", async () => {
   renderDashboard();
 
-  expect(await screen.findByText("$80,250")).toBeInTheDocument();
+  expect(await screen.findByText("$80,250.00")).toBeInTheDocument();
 });
 
 test("renders_salary_by_country_chart", async () => {
   renderDashboard();
 
   expect(await screen.findByTestId("salary-by-country-chart")).toBeInTheDocument();
+  expect(screen.getByText("Salary by Country")).toBeInTheDocument();
 });
 
 test("renders_salary_distribution_chart", async () => {
   renderDashboard();
 
   expect(await screen.findByTestId("salary-distribution-chart")).toBeInTheDocument();
+  expect(screen.getByText("Salary Distribution (All Employees)")).toBeInTheDocument();
 });
 
 test("shows_skeleton_before_data", async () => {
@@ -65,4 +72,5 @@ test("shows_skeleton_before_data", async () => {
   renderDashboard();
 
   expect(screen.getByTestId("dashboard-skeleton")).toBeInTheDocument();
+  expect(screen.getAllByTestId("dashboard-stat-skeleton")).toHaveLength(4);
 });
