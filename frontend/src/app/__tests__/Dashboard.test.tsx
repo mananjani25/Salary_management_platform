@@ -1,11 +1,21 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { delay, http, HttpResponse } from "msw";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import DashboardPage from "../page";
 import { server } from "../../mocks/server";
 
+function renderDashboard() {
+  const queryClient = new QueryClient();
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <DashboardPage />
+    </QueryClientProvider>,
+  );
+}
+
 test("renders_four_stat_cards", async () => {
-  render(<DashboardPage />);
+  renderDashboard();
 
   await waitFor(() => {
     expect(screen.getAllByTestId("stat-card")).toHaveLength(4);
@@ -13,25 +23,25 @@ test("renders_four_stat_cards", async () => {
 });
 
 test("total_employees_stat_shows_value", async () => {
-  render(<DashboardPage />);
+  renderDashboard();
 
   expect(await screen.findByText("5")).toBeInTheDocument();
 });
 
 test("avg_salary_formatted_as_currency", async () => {
-  render(<DashboardPage />);
+  renderDashboard();
 
   expect(await screen.findByText("$80,250")).toBeInTheDocument();
 });
 
 test("renders_salary_by_country_chart", async () => {
-  render(<DashboardPage />);
+  renderDashboard();
 
   expect(await screen.findByTestId("salary-by-country-chart")).toBeInTheDocument();
 });
 
 test("renders_salary_distribution_chart", async () => {
-  render(<DashboardPage />);
+  renderDashboard();
 
   expect(await screen.findByTestId("salary-distribution-chart")).toBeInTheDocument();
 });
@@ -52,7 +62,7 @@ test("shows_skeleton_before_data", async () => {
     }),
   );
 
-  render(<DashboardPage />);
+  renderDashboard();
 
   expect(screen.getByTestId("dashboard-skeleton")).toBeInTheDocument();
 });
