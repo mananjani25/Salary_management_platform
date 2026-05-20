@@ -10,6 +10,8 @@ from sqlalchemy import text
 from app.database import Base, engine
 from app.models.employee import Employee  # noqa: F401
 from app.routers.employees import router as employees_router
+from app.routers.insights import router as insights_router
+from app.routers.meta import router as meta_router
 from app.utils.errors import make_error
 
 load_dotenv()
@@ -32,6 +34,8 @@ app.add_middleware(
 
 Base.metadata.create_all(bind=engine)
 app.include_router(employees_router, prefix="/api/v1")
+app.include_router(insights_router, prefix="/api/v1")
+app.include_router(meta_router, prefix="/api/v1")
 
 
 @app.exception_handler(RequestValidationError)
