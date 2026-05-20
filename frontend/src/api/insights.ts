@@ -1,5 +1,5 @@
-import apiClient from "@/lib/apiClient";
-import type { Employee } from "@/types/employee";
+import apiClient from "../lib/apiClient";
+import type { Employee } from "../types/employee";
 import type {
   CountryInsight,
   DepartmentInsight,
@@ -7,7 +7,7 @@ import type {
   JobTitleInsight,
   MetaFilters,
   SummaryStats,
-} from "@/types/insights";
+} from "../types/insights";
 
 export async function getSummary(): Promise<SummaryStats> {
   const { data } = await apiClient.get<SummaryStats>("/insights/summary");
@@ -58,3 +58,4 @@ export async function getMetaFilters(): Promise<MetaFilters> {
   const { data } = await apiClient.get<MetaFilters>("/meta/filters");
   return data;
 }
+

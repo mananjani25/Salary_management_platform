@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 
-import type { Employee, PaginatedResponse } from "@/types/employee";
+import type { Employee, PaginatedResponse } from "../types/employee";
 import type {
   CountryInsight,
   DepartmentInsight,
@@ -8,7 +8,7 @@ import type {
   JobTitleInsight,
   MetaFilters,
   SummaryStats,
-} from "@/types/insights";
+} from "../types/insights";
 
 const API_BASE = "http://localhost:8000/api/v1";
 
@@ -203,3 +203,4 @@ export const handlers = [
   http.get(`${API_BASE}/meta/filters`, () => HttpResponse.json(metaFilters)),
   http.delete(`${API_BASE}/employees/:id`, () => HttpResponse.json({ message: "Employee deactivated" })),
 ];
+

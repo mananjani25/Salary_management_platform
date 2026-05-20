@@ -1,4 +1,4 @@
-import apiClient from "@/lib/apiClient";
+import apiClient from "../lib/apiClient";
 import type {
   Employee,
   EmployeeCreate,
@@ -6,7 +6,7 @@ import type {
   EmployeePatch,
   EmployeeUpdate,
   PaginatedResponse,
-} from "@/types/employee";
+} from "../types/employee";
 
 export async function listEmployees(
   params: EmployeeListParams = {},
@@ -50,3 +50,4 @@ export async function deleteEmployee(id: number): Promise<{ message: string }> {
   const { data } = await apiClient.delete<{ message: string }>(`/employees/${id}`);
   return data;
 }
+
