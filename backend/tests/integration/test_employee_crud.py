@@ -63,7 +63,7 @@ def test_get_employee_by_id_returns_200(client, sample_payload):
 
 def test_get_nonexistent_employee_returns_404(client):
     response = client.get("/api/v1/employees/99999")
-    assert response.status_code == 400
+    assert response.status_code == 404
 
 
 def test_update_employee_returns_200(client, sample_payload):
@@ -81,7 +81,7 @@ def test_update_employee_returns_200(client, sample_payload):
 
 def test_update_nonexistent_employee_returns_404(client, sample_payload):
     response = client.put("/api/v1/employees/99999", json=sample_payload)
-    assert response.status_code == 400
+    assert response.status_code == 404
 
 
 def test_patch_employee_updates_single_field(client, sample_payload):
@@ -119,5 +119,6 @@ def test_delete_sets_status_inactive(client, sample_payload):
 
 def test_delete_nonexistent_employee_returns_404(client):
     response = client.delete("/api/v1/employees/99999")
-    assert response.status_code == 400
+    assert response.status_code == 404
+
 
