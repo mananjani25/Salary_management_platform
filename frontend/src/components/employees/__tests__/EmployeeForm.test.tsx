@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 
-import type { Employee } from "@/types/employee";
-import EmployeeForm from "@/components/employees/EmployeeForm";
+import type { Employee } from "../../../types/employee";
+import EmployeeForm from "../EmployeeForm";
 
 function setup(props: Partial<React.ComponentProps<typeof EmployeeForm>> = {}) {
   const onSubmit = vi.fn();
@@ -32,7 +32,7 @@ test("submit_without_name_shows_error", async () => {
 
   await userEvent.click(screen.getByRole("button", { name: /submit/i }));
 
-  expect(screen.getByText(/required|name/i)).toBeInTheDocument();
+  expect(screen.getByText(/full name is required/i)).toBeInTheDocument();
 });
 
 test("submit_with_invalid_email_shows_error", async () => {
@@ -41,7 +41,7 @@ test("submit_with_invalid_email_shows_error", async () => {
   await userEvent.type(screen.getByLabelText(/email/i), "notvalid");
   await userEvent.click(screen.getByRole("button", { name: /submit/i }));
 
-  expect(screen.getByText(/invalid email|email/i)).toBeInTheDocument();
+  expect(screen.getByText(/invalid email format/i)).toBeInTheDocument();
 });
 
 test("submit_with_negative_salary_shows_error", async () => {
@@ -50,7 +50,7 @@ test("submit_with_negative_salary_shows_error", async () => {
   await userEvent.type(screen.getByLabelText(/salary/i), "-100");
   await userEvent.click(screen.getByRole("button", { name: /submit/i }));
 
-  expect(screen.getByText(/salary/i)).toBeInTheDocument();
+  expect(screen.getByText(/salary must be greater than 0|salary is required/i)).toBeInTheDocument();
 });
 
 test("valid_form_submission_calls_onSubmit_with_data", async () => {
@@ -68,11 +68,13 @@ test("valid_form_submission_calls_onSubmit_with_data", async () => {
   await userEvent.click(screen.getByRole("button", { name: /submit/i }));
 
   expect(onSubmit).toHaveBeenCalledTimes(1);
-  expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({
-    full_name: "Jane Doe",
-    email: "jane@example.com",
-    salary: 100000,
-  }));
+  expect(onSubmit).toHaveBeenCalledWith(
+    expect.objectContaining({
+      full_name: "Jane Doe",
+      email: "jane@example.com",
+      salary: 100000,
+    }),
+  );
 });
 
 test("edit_mode_prepopulates_all_fields", () => {
