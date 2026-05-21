@@ -33,7 +33,7 @@ export default function EmployeesPage() {
     queryFn: getMetaFilters,
   });
 
-  const { data: listData } = useQuery({
+  const { data: listData, isLoading: listLoading, refetch: refetchEmployees } = useQuery({
     queryKey: ["employees", filters],
     queryFn: () => listEmployees(filters),
     placeholderData: (previousData) => previousData,
@@ -123,7 +123,13 @@ export default function EmployeesPage() {
         />
       )}
 
-      <EmployeeTable filters={filters} onAddEmployee={() => setShowAddForm(true)} />
+      <EmployeeTable
+        filters={filters}
+        employees={listData?.data ?? []}
+        isLoading={listLoading}
+        onRefresh={refetchEmployees}
+        onAddEmployee={() => setShowAddForm(true)}
+      />
 
       <Pagination
         page={listData?.pagination.page ?? 1}

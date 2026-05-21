@@ -17,15 +17,20 @@ import EmployeeForm from "./EmployeeForm";
 
 type EmployeeTableProps = {
   filters?: EmployeeListParams;
+  employees?: Employee[];
+  isLoading?: boolean;
+  onRefresh?: () => Promise<unknown>;
   onAddEmployee?: () => void;
 };
 
-export default function EmployeeTable({ filters = {}, onAddEmployee }: EmployeeTableProps) {
+export default function EmployeeTable({ filters = {}, employees, isLoading = false, onRefresh, onAddEmployee }: EmployeeTableProps) {
   const queryClient = useContext(QueryClientContext);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
-  const [data, setData] = useState<{ data: Employee[] } | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [internalData, setInternalData] = useState<{ data: Employee[] } | null>(null);
+  const [internalLoading, setInternalLoading] = useState(true);
+
+  const isManagedMode = employees !== undefined;
 
   const mergedFilters = useMemo(
     () => ({
@@ -43,23 +48,33 @@ export default function EmployeeTable({ filters = {}, onAddEmployee }: EmployeeT
   );
 
   const fetchEmployees = async () => {
-    const isFirstLoad = data === null;
+    const isFirstLoad = internalData === null;
     if (isFirstLoad) {
-      setIsLoading(true);
+      setInternalLoading(true);
     }
     try {
       const response = await listEmployees(mergedFilters);
-      setData(response as { data: Employee[] });
+      setInternalData(response as { data: Employee[] });
     } finally {
       if (isFirstLoad) {
-        setIsLoading(false);
+        setInternalLoading(false);
       }
     }
   };
 
   useEffect(() => {
+    if (isManagedMode) {
+      return;
+    }
     void fetchEmployees();
-  }, [mergedFilters]);
+  }, [isManagedMode, mergedFilters]);
+
+  const hasActiveFilters = useMemo(() => {
+    return Boolean(filters.search || filters.country || filters.department || filters.job_title || filters.status);
+  }, [filters.search, filters.country, filters.department, filters.job_title, filters.status]);
+
+  const visibleEmployees = isManagedMode ? employees : (internalData?.data ?? []);
+  const tableIsLoading = isManagedMode ? isLoading : internalLoading;
 
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -76,7 +91,11 @@ export default function EmployeeTable({ filters = {}, onAddEmployee }: EmployeeT
       toast.success("Employee updated");
       setSelectedEmployee(null);
       await queryClient?.invalidateQueries({ queryKey: ["employees"] });
-      await fetchEmployees();
+      if (isManagedMode) {
+        await onRefresh?.();
+      } else {
+        await fetchEmployees();
+      }
     } finally {
       setIsSaving(false);
     }
@@ -90,7 +109,11 @@ export default function EmployeeTable({ filters = {}, onAddEmployee }: EmployeeT
       toast.success("Employee deactivated");
       setEmployeeToDelete(null);
       await queryClient?.invalidateQueries({ queryKey: ["employees"] });
-      await fetchEmployees();
+      if (isManagedMode) {
+        await onRefresh?.();
+      } else {
+        await fetchEmployees();
+      }
     } finally {
       setIsDeleting(false);
     }
@@ -103,16 +126,16 @@ export default function EmployeeTable({ filters = {}, onAddEmployee }: EmployeeT
         <button type="button" onClick={onAddEmployee}>Add Employee</button>
       </div>
 
-      {selectedEmployee ? null : isLoading ? (
+      {selectedEmployee ? null : tableIsLoading ? (
         <div>
           {Array.from({ length: 6 }).map((_, idx) => (
             <div key={idx} data-testid="employee-row-skeleton" className="h-8 border-b" />
           ))}
         </div>
-      ) : data && data.data.length === 0 ? (
+      ) : visibleEmployees.length === 0 ? (
         <div className="py-8 text-center">
           <p>No employees found</p>
-          <button type="button">Clear Filters</button>
+          {hasActiveFilters ? <button type="button">Clear Filters</button> : null}
         </div>
       ) : (
         <table className="w-full border-collapse">
@@ -130,7 +153,7 @@ export default function EmployeeTable({ filters = {}, onAddEmployee }: EmployeeT
             </tr>
           </thead>
           <tbody>
-            {data?.data.map((employee, index) => (
+            {visibleEmployees.map((employee, index) => (
               <tr key={employee.id}>
                 <td>{employee.employee_id}</td>
                 <td>{employee.full_name}</td>
