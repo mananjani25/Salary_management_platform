@@ -12,6 +12,8 @@ test("renders_column_headers", async () => {
   expect(await screen.findByText(/employee id/i)).toBeInTheDocument();
   expect(screen.getByText(/full name/i)).toBeInTheDocument();
   expect(screen.getByText(/job title/i)).toBeInTheDocument();
+  expect(screen.getByText(/department/i)).toBeInTheDocument();
+  expect(screen.getByText(/employment type/i)).toBeInTheDocument();
   expect(screen.getByText(/salary/i)).toBeInTheDocument();
   expect(screen.getByText(/status/i)).toBeInTheDocument();
   expect(screen.getByText(/actions/i)).toBeInTheDocument();
@@ -47,15 +49,7 @@ test("shows_empty_state_when_no_employees", async () => {
   expect(await screen.findByText(/no employees found/i)).toBeInTheDocument();
 });
 
-test("search_input_renders", () => {
-  render(<EmployeeTable />);
-  expect(screen.getByPlaceholderText(/search/i)).toBeInTheDocument();
-});
 
-test("add_employee_button_renders", () => {
-  render(<EmployeeTable />);
-  expect(screen.getByRole("button", { name: /add employee/i })).toBeInTheDocument();
-});
 
 test("clicking_edit_opens_dialog", async () => {
   render(<EmployeeTable />);

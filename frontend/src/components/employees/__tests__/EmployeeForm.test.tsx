@@ -100,6 +100,29 @@ test("edit_mode_prepopulates_all_fields", () => {
   expect(screen.getByLabelText(/full name/i)).toHaveValue("Existing User");
 });
 
+test("edit_mode_rounds_decimal_salary_to_integer", () => {
+  const initialData: Employee = {
+    id: 1,
+    employee_id: "EMP-00001",
+    full_name: "Existing User",
+    email: "existing@example.com",
+    job_title: "Software Engineer",
+    department: "Engineering",
+    country: "United States",
+    salary: 10931.09,
+    currency: "USD",
+    employment_type: "Full-Time",
+    status: "Active",
+    hire_date: "2020-05-10",
+    created_at: "2024-01-01T00:00:00",
+    updated_at: "2024-01-01T00:00:00",
+  };
+
+  setup({ initialData });
+
+  expect(screen.getByLabelText(/salary/i)).toHaveValue(10931);
+});
+
 test("cancel_button_calls_onCancel", async () => {
   const { onCancel } = setup();
 

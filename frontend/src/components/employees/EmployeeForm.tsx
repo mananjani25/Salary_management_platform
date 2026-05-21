@@ -46,7 +46,7 @@ export default function EmployeeForm({
         job_title: initialData.job_title,
         department: initialData.department,
         country: initialData.country,
-        salary: initialData.salary,
+        salary: Math.round(initialData.salary),
         currency: initialData.currency,
         employment_type: initialData.employment_type,
         status: initialData.status,
@@ -160,10 +160,9 @@ export default function EmployeeForm({
                   {...register("employment_type", { required: "Employment type is required" })}
                 >
                   <option value="">Select type…</option>
-                  <option value="Full-Time">Full-Time</option>
-                  <option value="Part-Time">Part-Time</option>
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
                   <option value="Contract">Contract</option>
-                  <option value="Intern">Intern</option>
                 </select>
                 {errors.employment_type && <p className="form-error">{errors.employment_type.message}</p>}
               </div>

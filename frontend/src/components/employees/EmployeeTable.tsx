@@ -142,6 +142,7 @@ export default function EmployeeTable({ filters = {}, employees, isLoading = fal
                 <th>Full Name</th>
                 <th>Job Title</th>
                 <th>Department</th>
+                <th>Employment Type</th>
                 <th>Country</th>
                 <th>Salary</th>
                 <th>Status</th>
@@ -156,6 +157,7 @@ export default function EmployeeTable({ filters = {}, employees, isLoading = fal
                   <td className="emp-name">{employee.full_name}</td>
                   <td>{employee.job_title}</td>
                   <td>{employee.department}</td>
+                  <td>{employee.employment_type}</td>
                   <td>{employee.country}</td>
                   <td className="emp-salary">{employee.salary.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}</td>
                   <td>
