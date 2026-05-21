@@ -30,7 +30,7 @@ test("renders_all_required_fields", () => {
 test("submit_without_name_shows_error", async () => {
   setup();
 
-  await userEvent.click(screen.getByRole("button", { name: /submit/i }));
+  await userEvent.click(screen.getByRole("button", { name: /add employee/i }));
 
   expect(screen.getByText(/full name is required/i)).toBeInTheDocument();
 });
@@ -39,7 +39,7 @@ test("submit_with_invalid_email_shows_error", async () => {
   setup();
 
   await userEvent.type(screen.getByLabelText(/email/i), "notvalid");
-  await userEvent.click(screen.getByRole("button", { name: /submit/i }));
+  await userEvent.click(screen.getByRole("button", { name: /add employee/i }));
 
   expect(screen.getByText(/invalid email format/i)).toBeInTheDocument();
 });
@@ -48,7 +48,7 @@ test("submit_with_negative_salary_shows_error", async () => {
   setup();
 
   await userEvent.type(screen.getByLabelText(/salary/i), "-100");
-  await userEvent.click(screen.getByRole("button", { name: /submit/i }));
+  await userEvent.click(screen.getByRole("button", { name: /add employee/i }));
 
   expect(screen.getByText(/salary must be greater than 0|salary is required/i)).toBeInTheDocument();
 });
@@ -62,10 +62,10 @@ test("valid_form_submission_calls_onSubmit_with_data", async () => {
   await userEvent.type(screen.getByLabelText(/department/i), "Engineering");
   await userEvent.type(screen.getByLabelText(/country/i), "United States");
   await userEvent.type(screen.getByLabelText(/salary/i), "100000");
-  await userEvent.type(screen.getByLabelText(/employment type/i), "Full-time");
+  await userEvent.selectOptions(screen.getByLabelText(/employment type/i), "Full-Time");
   await userEvent.type(screen.getByLabelText(/hire date/i), "2024-01-01");
 
-  await userEvent.click(screen.getByRole("button", { name: /submit/i }));
+  await userEvent.click(screen.getByRole("button", { name: /add employee/i }));
 
   expect(onSubmit).toHaveBeenCalledTimes(1);
   expect(onSubmit).toHaveBeenCalledWith(
@@ -111,5 +111,5 @@ test("cancel_button_calls_onCancel", async () => {
 test("submit_button_disabled_when_isLoading_true", () => {
   setup({ isLoading: true });
 
-  expect(screen.getByRole("button", { name: /saving|submit/i })).toBeDisabled();
+  expect(screen.getByRole("button", { name: /saving|add employee/i })).toBeDisabled();
 });

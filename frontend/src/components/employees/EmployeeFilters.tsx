@@ -20,12 +20,18 @@ export default function EmployeeFilters({
 }: EmployeeFiltersProps) {
   const [searchTerm, setSearchTerm] = useState(filters.search ?? "");
 
+  // Sync external search filter changes (e.g. from Clear button) to local state
   useEffect(() => {
+    setSearchTerm(filters.search ?? "");
+  }, [filters.search]);
+
+  useEffect(() => {
+    if (searchTerm === (filters.search ?? "")) return;
     const handle = setTimeout(() => {
       onFilterChange("search", searchTerm);
     }, 300);
     return () => clearTimeout(handle);
-  }, [searchTerm, onFilterChange]);
+  }, [searchTerm, filters.search, onFilterChange]);
 
   const hasActive = Boolean(filters.country || filters.department || filters.job_title || filters.status || searchTerm);
 

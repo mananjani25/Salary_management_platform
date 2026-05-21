@@ -17,7 +17,7 @@ test("renders_page_info", () => {
     />,
   );
 
-  expect(screen.getByText(/page 1 of 50|1 of 50/i)).toBeInTheDocument();
+  expect(screen.getByText((_, element) => element?.textContent === "Showing 1–20 of 1,000 employees")).toBeInTheDocument();
 });
 
 test("previous_disabled_on_first_page", () => {

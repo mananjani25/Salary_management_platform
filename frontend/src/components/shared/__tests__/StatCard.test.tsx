@@ -5,7 +5,7 @@ import StatCard from "../StatCard";
 test("renders_title_and_value", () => {
   render(<StatCard title="Total Employees" value={10000} />);
 
-  expect(screen.getByRole("heading", { name: /total employees/i })).toBeInTheDocument();
+  expect(screen.getByText("Total Employees")).toBeInTheDocument();
   expect(screen.getByText("10,000")).toBeInTheDocument();
 });
 

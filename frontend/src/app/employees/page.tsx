@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -50,14 +50,14 @@ export default function EmployeesPage() {
 
   const exportRows = useMemo(() => listData?.data ?? [], [listData]);
 
-  function handleFilterChange(key: string, value: string) {
+  const handleFilterChange = useCallback((key: string, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value, page: 1 }));
-  }
+  }, []);
 
-  function handleClearAll() {
-    setFilters({
+  const handleClearAll = useCallback(() => {
+    setFilters((prev) => ({
       page: 1,
-      page_size: filters.page_size ?? 20,
+      page_size: prev.page_size ?? 20,
       search: "",
       country: "",
       department: "",
@@ -65,8 +65,8 @@ export default function EmployeesPage() {
       status: "",
       sort_by: "full_name",
       sort_order: "asc",
-    });
-  }
+    }));
+  }, []);
 
   function exportCsv() {
     const headers = [

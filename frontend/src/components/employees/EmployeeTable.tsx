@@ -121,10 +121,6 @@ export default function EmployeeTable({ filters = {}, employees, isLoading = fal
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <input placeholder="Search employees" />
-        <button type="button" onClick={onAddEmployee}>Add Employee</button>
-      </div>
 
       {selectedEmployee ? null : tableIsLoading ? (
         <div>
@@ -139,55 +135,55 @@ export default function EmployeeTable({ filters = {}, employees, isLoading = fal
         </div>
       ) : (
         <div className="employee-table-wrapper">
-        <table className="emp-table">
-          <thead>
-            <tr>
-              <th>Employee ID</th>
-              <th>Full Name</th>
-              <th>Job Title</th>
-              <th>Department</th>
-              <th>Country</th>
-              <th>Salary</th>
-              <th>Status</th>
-              <th>Hire Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visibleEmployees.map((employee) => (
-              <tr key={employee.id}>
-                <td className="emp-id">{employee.employee_id}</td>
-                <td className="emp-name">{employee.full_name}</td>
-                <td>{employee.job_title}</td>
-                <td>{employee.department}</td>
-                <td>{employee.country}</td>
-                <td className="emp-salary">{employee.salary.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}</td>
-                <td>
-                  <span className={`status-badge status-badge--${employee.status.toLowerCase()}`}>{employee.status}</span>
-                </td>
-                <td className="emp-date">{employee.hire_date}</td>
-                <td className="emp-actions">
-                  <button
-                    type="button"
-                    className="btn-icon btn-icon--edit"
-                    aria-label={`Edit ${employee.full_name}`}
-                    onClick={() => setSelectedEmployee(employee)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-icon btn-icon--danger"
-                    aria-label={`Delete ${employee.full_name}`}
-                    onClick={() => setEmployeeToDelete(employee)}
-                  >
-                    Delete
-                  </button>
-                </td>
+          <table className="emp-table">
+            <thead>
+              <tr>
+                <th>Employee ID</th>
+                <th>Full Name</th>
+                <th>Job Title</th>
+                <th>Department</th>
+                <th>Country</th>
+                <th>Salary</th>
+                <th>Status</th>
+                <th>Hire Date</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {visibleEmployees.map((employee) => (
+                <tr key={employee.id}>
+                  <td className="emp-id">{employee.employee_id}</td>
+                  <td className="emp-name">{employee.full_name}</td>
+                  <td>{employee.job_title}</td>
+                  <td>{employee.department}</td>
+                  <td>{employee.country}</td>
+                  <td className="emp-salary">{employee.salary.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}</td>
+                  <td>
+                    <span className={`status-badge status-badge--${employee.status.toLowerCase()}`}>{employee.status}</span>
+                  </td>
+                  <td className="emp-date">{employee.hire_date}</td>
+                  <td className="emp-actions">
+                    <button
+                      type="button"
+                      className="btn-icon btn-icon--edit"
+                      aria-label={`Edit ${employee.full_name}`}
+                      onClick={() => setSelectedEmployee(employee)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-icon btn-icon--danger"
+                      aria-label={`Delete ${employee.full_name}`}
+                      onClick={() => setEmployeeToDelete(employee)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 

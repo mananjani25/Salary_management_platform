@@ -60,8 +60,8 @@ test("add_employee_button_renders", () => {
 test("clicking_edit_opens_dialog", async () => {
   render(<EmployeeTable />);
 
-  const editButton = await screen.findByRole("button", { name: /edit/i });
-  await userEvent.click(editButton);
+  const editButtons = await screen.findAllByRole("button", { name: /edit/i });
+  await userEvent.click(editButtons[0]);
 
   expect(await screen.findByText(/full name/i)).toBeInTheDocument();
 });
@@ -69,8 +69,8 @@ test("clicking_edit_opens_dialog", async () => {
 test("clicking_delete_opens_confirm_dialog", async () => {
   render(<EmployeeTable />);
 
-  const deleteButton = await screen.findByRole("button", { name: /delete/i });
-  await userEvent.click(deleteButton);
+  const deleteButtons = await screen.findAllByRole("button", { name: /delete/i });
+  await userEvent.click(deleteButtons[0]);
 
   expect(await screen.findByText(/are you sure/i)).toBeInTheDocument();
 });

@@ -21,11 +21,11 @@ test("renders_three_tab_labels", () => {
   expect(screen.getByText(/department analysis/i)).toBeInTheDocument();
 });
 
-test("country_tab_active_by_default", () => {
+test("country_tab_active_by_default", async () => {
   renderInsightsPage();
 
   expect(screen.getByText(/country analysis/i)).toBeInTheDocument();
-  expect(screen.getByText(/min salary/i)).toBeInTheDocument();
+  expect(await screen.findByText(/min salary/i)).toBeInTheDocument();
 });
 
 test("country_tab_shows_min_max_avg_cards", async () => {
