@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -48,7 +48,6 @@ export default function EmployeesPage() {
     },
   });
 
-  const exportRows = useMemo(() => listData?.data ?? [], [listData]);
 
   const handleFilterChange = useCallback((key: string, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value, page: 1 }));
@@ -68,40 +67,75 @@ export default function EmployeesPage() {
     }));
   }, []);
 
-  function exportCsv() {
-    const headers = [
-      "Employee ID",
-      "Full Name",
-      "Job Title",
-      "Department",
-      "Country",
-      "Salary",
-      "Status",
-      "Hire Date",
-    ];
+  async function exportCsv() {
+    const toastId = toast.loading("Preparing export…");
+    try {
+      const EXPORT_PAGE_SIZE = 100; // backend max is 100
 
-    const rows = exportRows.map((x) => [
-      x.employee_id,
-      x.full_name,
-      x.job_title,
-      x.department,
-      x.country,
-      String(x.salary),
-      x.status,
-      x.hire_date,
-    ]);
+      // Fetch first page to discover total_pages
+      const firstPage = await listEmployees({ ...filters, page: 1, page_size: EXPORT_PAGE_SIZE });
+      const totalPages = firstPage.pagination.total_pages;
 
-    const csv = [headers, ...rows]
-      .map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(","))
-      .join("\n");
+      // Fetch all remaining pages in parallel
+      const remainingPages =
+        totalPages > 1
+          ? await Promise.all(
+              Array.from({ length: totalPages - 1 }, (_, i) =>
+                listEmployees({ ...filters, page: i + 2, page_size: EXPORT_PAGE_SIZE })
+              )
+            )
+          : [];
 
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "employees.csv";
-    link.click();
-    URL.revokeObjectURL(url);
+      const allRows = [firstPage, ...remainingPages].flatMap((p) => p.data);
+
+      const headers = [
+        "Employee ID",
+        "Full Name",
+        "Job Title",
+        "Department",
+        "Employment Type",
+        "Country",
+        "Salary",
+        "Status",
+        "Hire Date",
+        "Email",
+      ];
+
+      const rows = allRows.map((x) => [
+        x.employee_id,
+        x.full_name,
+        x.job_title,
+        x.department,
+        x.employment_type,
+        x.country,
+        x.salary,        // plain number — no $ symbol so Excel reads it cleanly
+        x.status,
+        x.hire_date,
+        x.email ?? "",
+      ]);
+
+      const csv = [headers, ...rows]
+        .map((row) =>
+          row
+            .map((cell) => `"${String(cell ?? "").replaceAll('"', '""')}"`)
+            .join(",")
+        )
+        .join("\r\n"); // CRLF — RFC 4180 + Excel on Windows
+
+      // UTF-8 BOM tells Excel to open as UTF-8 (fixes #### and garbled chars)
+      const bom = "\uFEFF";
+      const blob = new Blob([bom + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "employees.csv";
+      link.click();
+      URL.revokeObjectURL(url);
+
+      toast.success(`Exported ${allRows.length} employee${allRows.length !== 1 ? "s" : ""}`, { id: toastId });
+    } catch {
+      toast.error("Export failed. Please try again.", { id: toastId });
+    }
   }
 
   return (
