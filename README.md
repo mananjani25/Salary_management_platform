@@ -11,6 +11,41 @@ It is suitable for local development, staged deployment, and production usage wi
 - Frontend (Vercel): Pending deployment
 - Backend API (Render/Railway): Pending deployment
 
+## Backend Deployment (Render)
+
+1. Create a new Web Service on Render and point it to this repository.
+2. Set the Root Directory to `backend`.
+3. Use Build Command: `pip install -r requirements.txt`.
+4. Start Command is read from `Procfile`:
+	- `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+5. Configure environment variables:
+	- `ALLOWED_ORIGINS=https://<your-frontend-domain>`
+	- `DATABASE_URL=sqlite:///./salary.db` (or your production DB URL)
+
+Deployment files included:
+- `backend/Procfile`
+- `backend/runtime.txt`
+
+## Frontend Deployment (Vercel)
+
+1. Create a new project on Vercel and import this repository.
+2. Set the Root Directory to `frontend`.
+3. Add the required environment variable:
+	- `NEXT_PUBLIC_API_BASE_URL=https://<your-backend-service>.onrender.com/api/v1`
+4. Deploy the project.
+5. After Vercel assigns a domain, update the backend `ALLOWED_ORIGINS` value on Render to include that Vercel URL.
+6. Redeploy the backend so the updated CORS settings take effect.
+
+Frontend deployment files included:
+- `frontend/vercel.json`
+- `frontend/.env.example`
+
+Production verification checklist:
+- Dashboard loads data from the deployed backend
+- Employees page lists production records without CORS errors
+- Create, edit, and deactivate employee flows succeed
+- Insights charts render with production data
+
 ## Tech Stack
 
 | Layer | Technologies |
