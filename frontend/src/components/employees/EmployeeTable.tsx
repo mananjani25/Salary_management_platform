@@ -192,14 +192,12 @@ export default function EmployeeTable({ filters = {}, employees, isLoading = fal
       )}
 
       {selectedEmployee && (
-        <div role="dialog" aria-label="Edit employee dialog">
-          <EmployeeForm
-            initialData={selectedEmployee}
-            onSubmit={handleSave}
-            onCancel={() => setSelectedEmployee(null)}
-            isLoading={isSaving}
-          />
-        </div>
+        <EmployeeForm
+          initialData={selectedEmployee}
+          onSubmit={handleSave}
+          onCancel={() => setSelectedEmployee(null)}
+          isLoading={isSaving}
+        />
       )}
 
       <DeleteConfirmDialog

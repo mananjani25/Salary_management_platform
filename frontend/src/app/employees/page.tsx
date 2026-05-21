@@ -147,13 +147,11 @@ export default function EmployeesPage() {
       />
 
       {showAddForm && (
-        <div role="dialog" aria-label="Add employee dialog">
-          <EmployeeForm
-            onSubmit={(payload) => createMutation.mutate(payload)}
-            onCancel={() => setShowAddForm(false)}
-            isLoading={createMutation.isPending}
-          />
-        </div>
+        <EmployeeForm
+          onSubmit={(payload) => createMutation.mutate(payload)}
+          onCancel={() => setShowAddForm(false)}
+          isLoading={createMutation.isPending}
+        />
       )}
     </div>
   );

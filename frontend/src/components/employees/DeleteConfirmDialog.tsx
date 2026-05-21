@@ -20,12 +20,35 @@ export default function DeleteConfirmDialog({
   if (!isOpen || !employee) return null;
 
   return (
-    <div role="dialog" aria-label="Delete confirmation">
-      <p>{`Are you sure you want to deactivate ${employee.full_name}? This cannot be undone.`}</p>
-      <button type="button" onClick={onCancel}>Cancel</button>
-      <button type="button" aria-label="Confirm deactivate" disabled={isLoading} onClick={onConfirm}>
-        {isLoading ? "Deactivating..." : "Deactivate"}
-      </button>
+    <div
+      className="modal-overlay"
+      role="dialog"
+      aria-label="Delete confirmation"
+      onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}
+    >
+      <div className="modal modal--sm">
+        <div className="modal__body" style={{ textAlign: 'center', paddingTop: 28 }}>
+          <div className="modal__warning-icon">⚠</div>
+          <h2 className="modal__title" style={{ marginBottom: 10 }}>Deactivate Employee?</h2>
+          <p style={{ fontSize: 14, color: 'var(--color-text-2)', lineHeight: 1.6 }}>
+            Are you sure you want to deactivate{' '}
+            <strong>{employee.full_name}</strong>?
+            <br />This action cannot be undone.
+          </p>
+        </div>
+        <div className="modal__footer" style={{ justifyContent: 'center' }}>
+          <button type="button" className="btn btn--secondary" onClick={onCancel}>Cancel</button>
+          <button
+            type="button"
+            className="btn btn--danger"
+            aria-label="Confirm deactivate"
+            disabled={isLoading}
+            onClick={onConfirm}
+          >
+            {isLoading ? 'Deactivating…' : 'Deactivate'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
