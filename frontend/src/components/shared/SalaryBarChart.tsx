@@ -24,7 +24,12 @@ export default function SalaryBarChart({ data, title, color = "#2563eb", "data-t
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis tickFormatter={(val: number) => `$${(val / 1000).toFixed(0)}k`} />
-            <Tooltip formatter={(val: number) => [`$${val.toLocaleString("en-US")}`, "Avg Salary"]} />
+                <Tooltip formatter={(val) => {
+                  if (typeof val === "number") {
+                    return [`$${val.toLocaleString("en-US")}`, "Avg Salary"];
+                  }
+                  return ["$0", "Avg Salary"];
+                }} />
             <Bar dataKey="value" fill={color} />
           </BarChart>
         </ResponsiveContainer>

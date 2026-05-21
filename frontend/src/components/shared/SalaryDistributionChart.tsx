@@ -20,7 +20,12 @@ export default function SalaryDistributionChart({ buckets, title = "Salary Distr
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="range" />
             <YAxis />
-            <Tooltip formatter={(val: number) => [val, "Employees"]} />
+            <Tooltip formatter={(val) => {
+              if (typeof val === "number") {
+                return [val, "Employees"];
+              }
+              return [0, "Employees"];
+            }} />
             <Bar dataKey="count" fill="#16a34a" />
           </BarChart>
         </ResponsiveContainer>
