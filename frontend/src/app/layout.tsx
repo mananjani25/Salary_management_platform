@@ -16,12 +16,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" aria-label="Salary Management Platform">
       <body className="min-h-screen bg-zinc-50 text-zinc-900 antialiased">
         <QueryProvider>
           <div className="flex min-h-screen flex-col md:flex-row">
-            <AppSidebar />
-            <main className="flex-1 p-6">{children}</main>
+            <AppSidebar aria-label="Application Sidebar" />
+            <main className="flex-1 p-6" aria-label="Main Content">
+              {children}
+            </main>
           </div>
           <Toaster position="top-right" />
         </QueryProvider>
