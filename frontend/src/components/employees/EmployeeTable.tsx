@@ -4,6 +4,7 @@ import { useContext, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import { QueryClientContext } from "@tanstack/react-query";
+import axios from "axios";
 
 import {
   deleteEmployee,
@@ -95,6 +96,24 @@ export default function EmployeeTable({ filters = {}, employees, isLoading = fal
         await onRefresh?.();
       } else {
         await fetchEmployees();
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const detail = err.response?.data?.detail;
+        if (Array.isArray(detail)) {
+          // FastAPI returns an array of validation errors
+          const messages = detail.map((d: { msg?: string; loc?: string[] }) => {
+            const field = d.loc ? d.loc[d.loc.length - 1] : "";
+            return field ? `${field}: ${d.msg}` : d.msg;
+          });
+          toast.error(messages.join("\n"));
+        } else if (typeof detail === "string") {
+          toast.error(detail);
+        } else {
+          toast.error("Validation error. Please enter the valid email.");
+        }
+      } else {
+        toast.error("An unexpected error occurred.");
       }
     } finally {
       setIsSaving(false);
