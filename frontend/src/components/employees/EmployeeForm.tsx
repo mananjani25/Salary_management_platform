@@ -98,39 +98,70 @@ export default function EmployeeForm({
               {/* Job Title */}
               <div className="form-group">
                 <label className="form-label" htmlFor="job_title">Job Title</label>
-                <input
+                <select
                   id="job_title"
                   aria-label="Job Title"
                   className="form-control"
-                  placeholder="Software Engineer"
                   {...register("job_title", { required: "Job title is required" })}
-                />
+                >
+                  <option value="">Select job title…</option>
+                  <option value="Software Engineer">Software Engineer</option>
+                  <option value="Senior Software Engineer">Senior Software Engineer</option>
+                  <option value="Product Manager">Product Manager</option>
+                  <option value="Data Analyst">Data Analyst</option>
+                  <option value="HR Specialist">HR Specialist</option>
+                  <option value="DevOps Engineer">DevOps Engineer</option>
+                  <option value="Marketing Manager">Marketing Manager</option>
+                  <option value="Sales Executive">Sales Executive</option>
+                  <option value="Finance Analyst">Finance Analyst</option>
+                  <option value="UX Designer">UX Designer</option>
+                  <option value="Engineering Manager">Engineering Manager</option>
+                  <option value="QA Engineer">QA Engineer</option>
+                </select>
                 {errors.job_title && <p className="form-error">{errors.job_title.message}</p>}
               </div>
 
               {/* Department */}
               <div className="form-group">
                 <label className="form-label" htmlFor="department">Department</label>
-                <input
+                <select
                   id="department"
                   aria-label="Department"
                   className="form-control"
-                  placeholder="Engineering"
                   {...register("department", { required: "Department is required" })}
-                />
+                >
+                  <option value="">Select department…</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Product">Product</option>
+                  <option value="HR">HR</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Design">Design</option>
+                  <option value="Operations">Operations</option>
+                </select>
                 {errors.department && <p className="form-error">{errors.department.message}</p>}
               </div>
 
               {/* Country */}
               <div className="form-group">
                 <label className="form-label" htmlFor="country">Country</label>
-                <input
+                <select
                   id="country"
                   aria-label="Country"
                   className="form-control"
-                  placeholder="United States"
                   {...register("country", { required: "Country is required" })}
-                />
+                >
+                  <option value="">Select country…</option>
+                  <option value="United States">United States</option>
+                  <option value="India">India</option>
+                  <option value="United Kingdom">United Kingdom</option>
+                  <option value="Germany">Germany</option>
+                  <option value="Canada">Canada</option>
+                  <option value="Australia">Australia</option>
+                  <option value="Singapore">Singapore</option>
+                  <option value="Brazil">Brazil</option>
+                </select>
                 {errors.country && <p className="form-error">{errors.country.message}</p>}
               </div>
 

@@ -58,11 +58,11 @@ test("valid_form_submission_calls_onSubmit_with_data", async () => {
 
   await userEvent.type(screen.getByLabelText(/full name/i), "Jane Doe");
   await userEvent.type(screen.getByLabelText(/email/i), "jane@example.com");
-  await userEvent.type(screen.getByLabelText(/job title/i), "Software Engineer");
-  await userEvent.type(screen.getByLabelText(/department/i), "Engineering");
-  await userEvent.type(screen.getByLabelText(/country/i), "United States");
+  await userEvent.selectOptions(screen.getByLabelText(/job title/i), "Software Engineer");
+  await userEvent.selectOptions(screen.getByLabelText(/department/i), "Engineering");
+  await userEvent.selectOptions(screen.getByLabelText(/country/i), "United States");
   await userEvent.type(screen.getByLabelText(/salary/i), "100000");
-  await userEvent.selectOptions(screen.getByLabelText(/employment type/i), "Full-Time");
+  await userEvent.selectOptions(screen.getByLabelText(/employment type/i), "Full-time");
   await userEvent.type(screen.getByLabelText(/hire date/i), "2024-01-01");
 
   await userEvent.click(screen.getByRole("button", { name: /add employee/i }));
