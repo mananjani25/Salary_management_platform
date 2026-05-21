@@ -14,10 +14,10 @@ type SalaryBarChartProps = {
   "data-testid"?: string;
 };
 
-export default function SalaryBarChart({ data, title, color = "#2563eb", "data-testid": dataTestId }: SalaryBarChartProps) {
+export default function SalaryBarChart({ data, title, color = "#6366f1", "data-testid": dataTestId }: SalaryBarChartProps) {
   return (
-    <div data-testid={dataTestId} className="rounded-lg border p-4">
-      <h2 className="mb-4 text-lg font-semibold">{title}</h2>
+    <div data-testid={dataTestId} className="chart-card">
+      <h2 className="chart-card__title">{title}</h2>
       <div className="h-72 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>

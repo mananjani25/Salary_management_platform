@@ -19,9 +19,9 @@ export default function RootLayout({
     <html lang="en" aria-label="Salary Management Platform">
       <body className="min-h-screen bg-zinc-50 text-zinc-900 antialiased">
         <QueryProvider>
-          <div className="flex min-h-screen flex-col md:flex-row">
+          <div style={{ display: 'flex', minHeight: '100vh' }}>
             <AppSidebar aria-label="Application Sidebar" />
-            <main className="flex-1 p-6" aria-label="Main Content">
+            <main style={{ flex: 1, padding: '32px 36px', minWidth: 0 }} aria-label="Main Content">
               {children}
             </main>
           </div>

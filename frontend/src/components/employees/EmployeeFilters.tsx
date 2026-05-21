@@ -27,36 +27,43 @@ export default function EmployeeFilters({
     return () => clearTimeout(handle);
   }, [searchTerm, onFilterChange]);
 
+  const hasActive = Boolean(filters.country || filters.department || filters.job_title || filters.status || searchTerm);
+
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="filters-bar">
       <input
-        placeholder="Search employees"
+        className="form-control"
+        placeholder="🔍  Search by name, ID…"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
 
-      <select value={filters.country ?? ""} onChange={(e) => onFilterChange("country", e.target.value)}>
+      <select className="form-control" value={filters.country ?? ""} onChange={(e) => onFilterChange("country", e.target.value)}>
         <option value="">All Countries</option>
         {metaFilters.countries.map((x) => <option key={x} value={x}>{x}</option>)}
       </select>
 
-      <select value={filters.department ?? ""} onChange={(e) => onFilterChange("department", e.target.value)}>
+      <select className="form-control" value={filters.department ?? ""} onChange={(e) => onFilterChange("department", e.target.value)}>
         <option value="">All Departments</option>
         {metaFilters.departments.map((x) => <option key={x} value={x}>{x}</option>)}
       </select>
 
-      <select value={filters.job_title ?? ""} onChange={(e) => onFilterChange("job_title", e.target.value)}>
+      <select className="form-control" value={filters.job_title ?? ""} onChange={(e) => onFilterChange("job_title", e.target.value)}>
         <option value="">All Job Titles</option>
         {metaFilters.job_titles.map((x) => <option key={x} value={x}>{x}</option>)}
       </select>
 
-      <select value={filters.status ?? ""} onChange={(e) => onFilterChange("status", e.target.value)}>
-        <option value="">All</option>
+      <select className="form-control" value={filters.status ?? ""} onChange={(e) => onFilterChange("status", e.target.value)}>
+        <option value="">All Statuses</option>
         <option value="Active">Active</option>
         <option value="Inactive">Inactive</option>
       </select>
 
-      <button type="button" onClick={onClearAll}>Clear Filters</button>
+      {hasActive && (
+        <button type="button" className="btn btn--secondary btn--sm" onClick={onClearAll}>
+          ✕ Clear
+        </button>
+      )}
     </div>
   );
 }
