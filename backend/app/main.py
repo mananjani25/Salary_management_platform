@@ -16,8 +16,13 @@ from app.utils.errors import make_error
 
 load_dotenv()
 
+
+def normalize_origin(origin: str) -> str:
+    return origin.strip().rstrip("/")
+
+
 origins = [
-    origin.strip()
+    normalize_origin(origin)
     for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
     if origin.strip()
 ]
