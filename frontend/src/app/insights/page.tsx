@@ -176,8 +176,11 @@ export default function InsightsPage() {
 
           {/* Chart */}
           <SalaryBarChart
-            title="Average Salary by Job Title"
-            data={(jobTitleInsights?.data ?? []).map((x) => ({ name: x.job_title, value: x.avg_salary }))}
+            title={selectedJobTitle ? `Average Salary for ${selectedJobTitle} by Country` : "Average Salary by Job Title"}
+            data={(jobTitleInsights?.data ?? []).map((x) => ({
+              name: selectedJobTitle ? x.country : x.job_title,
+              value: x.avg_salary,
+            }))}
           />
         </section>
       )}

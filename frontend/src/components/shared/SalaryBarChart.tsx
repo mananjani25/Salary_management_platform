@@ -22,7 +22,14 @@ export default function SalaryBarChart({ data, title, color = "#6366f1", "data-t
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+            <XAxis
+              dataKey="name"
+              interval={0}
+              angle={-30}
+              textAnchor="end"
+              height={70}
+              tick={{ fontSize: 11 }}
+            />
             <YAxis tickFormatter={(val: number) => `$${(val / 1000).toFixed(0)}k`} />
                 <Tooltip formatter={(val) => {
                   if (typeof val === "number") {

@@ -86,27 +86,45 @@ def get_by_country(db: Session, country: str | None = None) -> dict:
 
 
 def get_by_job_title(db: Session, country: str | None = None, job_title: str | None = None) -> dict:
-    query = (
-        db.query(
-            Employee.job_title,
-            Employee.country,
-            func.count(Employee.id).label("employee_count"),
-            func.min(Employee.salary).label("min_salary"),
-            func.max(Employee.salary).label("max_salary"),
-            func.avg(Employee.salary).label("avg_salary"),
+    if country == "":
+        country = None
+    if job_title == "":
+        job_title = None
+
+    group_by_both = (job_title is not None) and (country is None)
+
+    if group_by_both:
+        query = (
+            db.query(
+                Employee.job_title,
+                Employee.country,
+                func.count(Employee.id).label("employee_count"),
+                func.min(Employee.salary).label("min_salary"),
+                func.max(Employee.salary).label("max_salary"),
+                func.avg(Employee.salary).label("avg_salary"),
+            )
+            .filter(Employee.status == "Active")
         )
-        .filter(Employee.status == "Active")
-    )
+    else:
+        query = (
+            db.query(
+                Employee.job_title,
+                func.count(Employee.id).label("employee_count"),
+                func.min(Employee.salary).label("min_salary"),
+                func.max(Employee.salary).label("max_salary"),
+                func.avg(Employee.salary).label("avg_salary"),
+            )
+            .filter(Employee.status == "Active")
+        )
 
     if country:
         query = query.filter(Employee.country == country)
     if job_title:
         query = query.filter(Employee.job_title == job_title)
 
-    rows = query.group_by(Employee.job_title, Employee.country).all()
-
-    return {
-        "data": [
+    if group_by_both:
+        rows = query.group_by(Employee.job_title, Employee.country).all()
+        data = [
             {
                 "job_title": row.job_title,
                 "country": row.country,
@@ -117,7 +135,22 @@ def get_by_job_title(db: Session, country: str | None = None, job_title: str | N
             }
             for row in rows
         ]
-    }
+    else:
+        rows = query.group_by(Employee.job_title).all()
+        data = [
+            {
+                "job_title": row.job_title,
+                "country": country or "All",
+                "employee_count": row.employee_count,
+                "min_salary": _to_float(row.min_salary),
+                "max_salary": _to_float(row.max_salary),
+                "avg_salary": _to_float(row.avg_salary),
+            }
+            for row in rows
+        ]
+
+    return {"data": data}
+
 
 
 def get_by_department(db: Session) -> dict:
