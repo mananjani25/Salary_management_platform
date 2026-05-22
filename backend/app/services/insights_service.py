@@ -1,7 +1,7 @@
 import math
 from statistics import median
 
-from sqlalchemy import func
+from sqlalchemy import func, case
 from sqlalchemy.orm import Session
 
 from app.constants import EMPLOYMENT_TYPES, STATUSES
@@ -10,6 +10,36 @@ from app.models.employee import Employee
 
 def _to_float(value, default=0.0):
     return round(float(value), 2) if value is not None else default
+
+
+def _calculate_median_salary(db: Session, filters: list = None) -> float:
+    query = db.query(func.count(Employee.id)).filter(Employee.status == "Active")
+    if filters:
+        for f in filters:
+            query = query.filter(f)
+    count = query.scalar() or 0
+    if count == 0:
+        return 0.0
+
+    salary_query = (
+        db.query(Employee.salary)
+        .filter(Employee.status == "Active")
+        .order_by(Employee.salary.asc())
+    )
+    if filters:
+        for f in filters:
+            salary_query = salary_query.filter(f)
+
+    if count % 2 == 1:
+        val = salary_query.offset(count // 2).limit(1).scalar()
+        return round(float(val), 2) if val is not None else 0.0
+    else:
+        middle_two = salary_query.offset((count // 2) - 1).limit(2).all()
+        if len(middle_two) == 2:
+            return round((float(middle_two[0][0]) + float(middle_two[1][0])) / 2.0, 2)
+        elif len(middle_two) == 1:
+            return round(float(middle_two[0][0]), 2)
+        return 0.0
 
 
 def get_summary(db: Session) -> dict:
@@ -29,8 +59,7 @@ def get_summary(db: Session) -> dict:
         .one()
     )
 
-    salaries = [float(s[0]) for s in db.query(Employee.salary).filter(Employee.status == "Active").order_by(Employee.salary.asc()).all()]
-    median_salary = round(float(median(salaries)), 2) if salaries else 0.0
+    median_salary = _calculate_median_salary(db)
 
     return {
         "total_employees": total_employees,
@@ -63,13 +92,7 @@ def get_by_country(db: Session, country: str | None = None) -> dict:
 
     data = []
     for row in rows:
-        salaries = [
-            float(s[0])
-            for s in db.query(Employee.salary)
-            .filter(Employee.status == "Active", Employee.country == row.country)
-            .order_by(Employee.salary.asc())
-            .all()
-        ]
+        median_salary = _calculate_median_salary(db, [Employee.country == row.country])
         data.append(
             {
                 "country": row.country,
@@ -77,7 +100,7 @@ def get_by_country(db: Session, country: str | None = None) -> dict:
                 "min_salary": _to_float(row.min_salary),
                 "max_salary": _to_float(row.max_salary),
                 "avg_salary": _to_float(row.avg_salary),
-                "median_salary": round(float(median(salaries)), 2) if salaries else 0.0,
+                "median_salary": median_salary,
                 "total_spend": _to_float(row.total_spend),
             }
         )
@@ -180,39 +203,32 @@ def get_by_department(db: Session) -> dict:
 
 
 def get_salary_distribution(db: Session, country: str | None = None, job_title: str | None = None) -> dict:
-    query = db.query(Employee.salary).filter(Employee.status == "Active")
+    query = db.query(
+        func.sum(case((Employee.salary < 25000, 1), else_=0)).label("b0_25"),
+        func.sum(case(((Employee.salary >= 25000) & (Employee.salary < 50000), 1), else_=0)).label("b25_50"),
+        func.sum(case(((Employee.salary >= 50000) & (Employee.salary < 75000), 1), else_=0)).label("b50_75"),
+        func.sum(case(((Employee.salary >= 75000) & (Employee.salary < 100000), 1), else_=0)).label("b75_100"),
+        func.sum(case(((Employee.salary >= 100000) & (Employee.salary < 150000), 1), else_=0)).label("b100_150"),
+        func.sum(case((Employee.salary >= 150000, 1), else_=0)).label("b150_plus"),
+    ).filter(Employee.status == "Active")
 
     if country:
         query = query.filter(Employee.country == country)
     if job_title:
         query = query.filter(Employee.job_title == job_title)
 
-    salaries = [float(s[0]) for s in query.all()]
+    row = query.one()
 
-    buckets = {
-        "0-25k": 0,
-        "25k-50k": 0,
-        "50k-75k": 0,
-        "75k-100k": 0,
-        "100k-150k": 0,
-        "150k+": 0,
+    return {
+        "buckets": [
+            {"range": "0-25k", "count": row.b0_25 or 0},
+            {"range": "25k-50k", "count": row.b25_50 or 0},
+            {"range": "50k-75k", "count": row.b50_75 or 0},
+            {"range": "75k-100k", "count": row.b75_100 or 0},
+            {"range": "100k-150k", "count": row.b100_150 or 0},
+            {"range": "150k+", "count": row.b150_plus or 0},
+        ]
     }
-
-    for salary in salaries:
-        if salary < 25000:
-            buckets["0-25k"] += 1
-        elif salary < 50000:
-            buckets["25k-50k"] += 1
-        elif salary < 75000:
-            buckets["50k-75k"] += 1
-        elif salary < 100000:
-            buckets["75k-100k"] += 1
-        elif salary < 150000:
-            buckets["100k-150k"] += 1
-        else:
-            buckets["150k+"] += 1
-
-    return {"buckets": [{"range": key, "count": value} for key, value in buckets.items()]}
 
 
 def get_top_paid(db: Session, limit: int = 10, country: str | None = None, department: str | None = None) -> dict:
