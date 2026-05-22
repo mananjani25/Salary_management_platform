@@ -110,9 +110,9 @@ export default function EmployeesPage() {
         x.department,
         x.employment_type,
         x.country,
-        x.salary,        // plain number — no $ symbol so Excel reads it cleanly
+        Math.round(x.salary),        // plain integer — no decimal points so Excel displays it cleanly
         x.status,
-        x.hire_date,
+        x.hire_date ? ` ${x.hire_date}` : "",
         x.email ?? "",
       ]);
 
