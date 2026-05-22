@@ -107,6 +107,7 @@ def list_employees(
     status: str,
     sort_by: str,
     sort_order: str,
+    employment_type: str = "",
 ) -> dict:
     allowed_sort_fields = ["full_name", "salary", "hire_date", "country", "department", "job_title"]
     if sort_by not in allowed_sort_fields:
@@ -129,6 +130,7 @@ def list_employees(
                 Employee.full_name.ilike(like),
                 Employee.email.ilike(like),
                 Employee.job_title.ilike(like),
+                Employee.employee_id.ilike(like),
             )
         )
     if country:
@@ -139,6 +141,8 @@ def list_employees(
         query = query.filter(Employee.job_title == job_title)
     if status:
         query = query.filter(Employee.status == status)
+    if employment_type:
+        query = query.filter(Employee.employment_type == employment_type)
 
     total = query.count()
 

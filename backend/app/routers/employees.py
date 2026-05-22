@@ -24,6 +24,7 @@ def list_employees_endpoint(
     department: str = Query(default=""),
     job_title: str = Query(default=""),
     status: str = Query(default=""),
+    employment_type: str = Query(default=""),
     sort_by: str = Query(default="full_name"),
     sort_order: str = Query(default="asc"),
     db: Session = Depends(get_db),
@@ -39,6 +40,7 @@ def list_employees_endpoint(
         status=status,
         sort_by=sort_by,
         sort_order=sort_order,
+        employment_type=employment_type,
     )
 
 

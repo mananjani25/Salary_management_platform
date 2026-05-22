@@ -19,6 +19,7 @@ export async function listEmployees(
     department: params.department ?? "",
     job_title: params.job_title ?? "",
     status: params.status ?? "",
+    employment_type: params.employment_type ?? "",
     sort_by: params.sort_by ?? "full_name",
     sort_order: params.sort_order ?? "asc",
   };

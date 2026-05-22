@@ -125,3 +125,26 @@ def test_sort_salary_descending(client):
 def test_page_size_over_100_returns_422(client):
     response = client.get("/api/v1/employees?page_size=200")
     assert response.status_code == 422
+
+
+def test_filter_by_employment_type(client):
+    _create_employee(client, 1, employment_type="Full-time", email="et1@example.com")
+    _create_employee(client, 2, employment_type="Contract", email="et2@example.com")
+
+    response = client.get("/api/v1/employees?employment_type=Contract")
+    data = response.json()["data"]
+    assert len(data) == 1
+    assert data[0]["employment_type"] == "Contract"
+
+
+def test_search_by_employee_id(client):
+    # Wait, the ID format of created employee depends on what index is given.
+    # The ID generator function in backend queries db max ID.
+    # Let's verify we get a returned employee_id and search for it.
+    res = _create_employee(client, 1, full_name="Search ID Target", email="searchid@example.com")
+    emp_id = res.json()["employee_id"]
+
+    response = client.get(f"/api/v1/employees?q={emp_id}")
+    data = response.json()["data"]
+    assert len(data) == 1
+    assert data[0]["full_name"] == "Search ID Target"

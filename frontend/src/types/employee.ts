@@ -51,6 +51,7 @@ export interface EmployeeListParams {
   department?: string;
   job_title?: string;
   status?: string;
+  employment_type?: string;
   sort_by?: string;
   sort_order?: "asc" | "desc";
 }

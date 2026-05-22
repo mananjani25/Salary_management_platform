@@ -23,6 +23,7 @@ export default function EmployeesPage() {
     department: "",
     job_title: "",
     status: "",
+    employment_type: "",
     sort_by: "full_name",
     sort_order: "asc",
   });
@@ -62,6 +63,7 @@ export default function EmployeesPage() {
       department: "",
       job_title: "",
       status: "",
+      employment_type: "",
       sort_by: "full_name",
       sort_order: "asc",
     }));

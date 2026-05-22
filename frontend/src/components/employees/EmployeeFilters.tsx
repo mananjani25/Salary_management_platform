@@ -33,7 +33,7 @@ export default function EmployeeFilters({
     return () => clearTimeout(handle);
   }, [searchTerm, filters.search, onFilterChange]);
 
-  const hasActive = Boolean(filters.country || filters.department || filters.job_title || filters.status || searchTerm);
+  const hasActive = Boolean(filters.country || filters.department || filters.job_title || filters.status || filters.employment_type || searchTerm);
 
   return (
     <div className="filters-bar">
@@ -59,6 +59,10 @@ export default function EmployeeFilters({
         {metaFilters.job_titles.map((x) => <option key={x} value={x}>{x}</option>)}
       </select>
 
+      <select className="form-control" value={filters.employment_type ?? ""} onChange={(e) => onFilterChange("employment_type", e.target.value)}>
+        <option value="">All Employment Types</option>
+        {metaFilters.employment_types.map((x) => <option key={x} value={x}>{x}</option>)}
+      </select>
 
       {hasActive && (
         <button type="button" className="btn btn--secondary btn--sm" onClick={onClearAll}>
