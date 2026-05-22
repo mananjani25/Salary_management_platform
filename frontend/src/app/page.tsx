@@ -56,6 +56,7 @@ export default function DashboardPage() {
         <SalaryBarChart
           data-testid="salary-by-country-chart"
           title="Salary by Country"
+          defaultType="donut"
           data={(countryData?.data ?? []).map((row) => ({
             name: row.country,
             value: row.avg_salary,
@@ -64,6 +65,7 @@ export default function DashboardPage() {
         <SalaryDistributionChart
           data-testid="salary-distribution-chart"
           title="Salary Distribution (All Employees)"
+          defaultType="area"
           buckets={distributionData?.buckets ?? []}
         />
       </div>

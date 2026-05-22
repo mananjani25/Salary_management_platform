@@ -114,6 +114,7 @@ export default function InsightsPage() {
           <div className="mt-4">
             <SalaryBarChart
               title="Average Salary by Country"
+              defaultType="area"
               data={(countryInsights?.data ?? []).map((x) => ({ name: x.country, value: x.avg_salary }))}
             />
           </div>
@@ -177,6 +178,7 @@ export default function InsightsPage() {
           {/* Chart */}
           <SalaryBarChart
             title={selectedJobTitle ? `Average Salary for ${selectedJobTitle} by Country` : "Average Salary by Job Title"}
+            defaultType="radar"
             data={(jobTitleInsights?.data ?? []).map((x) => ({
               name: selectedJobTitle ? x.country : x.job_title,
               value: x.avg_salary,
@@ -208,6 +210,7 @@ export default function InsightsPage() {
           {/* Bar chart */}
           <SalaryBarChart
             title="Average Salary by Department"
+            defaultType="donut"
             data={(departmentInsights?.data ?? []).map((x) => ({ name: x.department, value: x.avg_salary }))}
           />
 
