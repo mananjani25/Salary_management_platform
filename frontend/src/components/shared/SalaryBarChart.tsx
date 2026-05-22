@@ -64,6 +64,20 @@ export default function SalaryBarChart({
     );
   }
 
+  // Visual/Mathematical constraints based on data size:
+  // - Area Chart needs at least 2 points to draw an area under a line.
+  // - Radar Chart needs at least 3 points to form a closed polygon.
+  const isAreaDisabled = data.length < 2;
+  const isRadarDisabled = data.length < 3;
+
+  // Fallback to "bar" if current type is unsupported by the current dataset size
+  let activeChartType = chartType;
+  if (activeChartType === "area" && isAreaDisabled) {
+    activeChartType = "bar";
+  } else if (activeChartType === "radar" && isRadarDisabled) {
+    activeChartType = "bar";
+  }
+
   const gradientId = `colorGrad-${title.replace(/[^a-zA-Z0-9]/g, "")}`;
 
   return (
@@ -79,32 +93,50 @@ export default function SalaryBarChart({
             alignSelf: "flex-start",
           }}
         >
-          {(["bar", "area", "donut", "radar"] as const).map((type) => (
-            <button
-              key={type}
-              type="button"
-              className="px-2.5 py-1 text-xs font-semibold capitalize transition-all"
-              style={{
-                background: chartType === type ? "var(--color-surface)" : "transparent",
-                color: chartType === type ? "var(--color-text-1)" : "var(--color-text-3)",
-                border: "none",
-                cursor: "pointer",
-                borderRadius: "6px",
-                padding: "4px 10px",
-                boxShadow: chartType === type ? "var(--shadow-sm)" : "none",
-              }}
-              onClick={() => setChartType(type)}
-            >
-              {type}
-            </button>
-          ))}
+          {(["bar", "area", "donut", "radar"] as const).map((type) => {
+            const isDisabled = (type === "area" && isAreaDisabled) || (type === "radar" && isRadarDisabled);
+            const isActive = activeChartType === type;
+
+            return (
+              <button
+                key={type}
+                type="button"
+                disabled={isDisabled}
+                className="px-2.5 py-1 text-xs font-semibold capitalize transition-all"
+                style={{
+                  background: isActive ? "var(--color-surface)" : "transparent",
+                  color: isDisabled
+                    ? "var(--color-text-3)"
+                    : isActive
+                    ? "var(--color-text-1)"
+                    : "var(--color-text-3)",
+                  border: "none",
+                  cursor: isDisabled ? "not-allowed" : "pointer",
+                  borderRadius: "6px",
+                  padding: "4px 10px",
+                  boxShadow: isActive ? "var(--shadow-sm)" : "none",
+                  opacity: isDisabled ? 0.45 : 1,
+                }}
+                title={
+                  isDisabled
+                    ? type === "area"
+                      ? "Area chart requires at least 2 data points"
+                      : "Radar chart requires at least 3 data points"
+                    : ""
+                }
+                onClick={() => setChartType(type)}
+              >
+                {type}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       <div className="h-80 w-full">
         <ResponsiveContainer width="100%" height="100%">
           {(() => {
-            switch (chartType) {
+            switch (activeChartType) {
               case "area":
                 return (
                   <AreaChart data={data} margin={{ bottom: 10, right: 10 }}>
