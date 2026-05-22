@@ -120,7 +120,7 @@ def list_employees(
             detail=make_error("INVALID_PAGE_SIZE", "page_size must be less than or equal to 100"),
         )
 
-    query = db.query(Employee)
+    query = db.query(Employee).filter(Employee.status == "Active")
 
     if search:
         like = f"%{search}%"

@@ -53,9 +53,9 @@ def analytics_db(test_db):
     return test_db
 
 
-def test_summary_total_employees_includes_inactive(client, analytics_db):
+def test_summary_total_employees_excludes_inactive(client, analytics_db):
     response = client.get("/api/v1/insights/summary")
-    assert response.json()["total_employees"] == 7
+    assert response.json()["total_employees"] == 6
 
 
 def test_summary_active_employees_count(client, analytics_db):

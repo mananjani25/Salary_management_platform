@@ -96,7 +96,7 @@ const mockEmployees: Employee[] = [
 ];
 
 const summary: SummaryStats = {
-  total_employees: 5,
+  total_employees: 4,
   active_employees: 4,
   total_salary_spend: 321000,
   global_min_salary: 42000,
@@ -144,9 +144,10 @@ const metaFilters: MetaFilters = {
 
 export const handlers = [
   http.get(`${API_BASE}/employees`, () => {
+    const activeEmployees = mockEmployees.filter((e) => e.status === "Active");
     const response: PaginatedResponse<Employee> = {
-      data: mockEmployees,
-      pagination: { page: 1, page_size: 20, total: 5, total_pages: 1 },
+      data: activeEmployees,
+      pagination: { page: 1, page_size: 20, total: activeEmployees.length, total_pages: 1 },
     };
     return HttpResponse.json(response);
   }),

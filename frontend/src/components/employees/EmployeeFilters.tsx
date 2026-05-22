@@ -59,11 +59,6 @@ export default function EmployeeFilters({
         {metaFilters.job_titles.map((x) => <option key={x} value={x}>{x}</option>)}
       </select>
 
-      <select className="form-control" value={filters.status ?? ""} onChange={(e) => onFilterChange("status", e.target.value)}>
-        <option value="">All Statuses</option>
-        <option value="Active">Active</option>
-        <option value="Inactive">Inactive</option>
-      </select>
 
       {hasActive && (
         <button type="button" className="btn btn--secondary btn--sm" onClick={onClearAll}>

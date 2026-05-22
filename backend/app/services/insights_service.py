@@ -13,7 +13,7 @@ def _to_float(value, default=0.0):
 
 
 def get_summary(db: Session) -> dict:
-    total_employees = db.query(func.count(Employee.id)).scalar() or 0
+    total_employees = db.query(func.count(Employee.id)).filter(Employee.status == "Active").scalar() or 0
 
     active_q = db.query(Employee).filter(Employee.status == "Active")
     active_employees = active_q.count()
@@ -250,7 +250,7 @@ def get_top_paid(db: Session, limit: int = 10, country: str | None = None, depar
 
 def get_meta_filters(db: Session) -> dict:
     def distinct_sorted(column):
-        return sorted([item[0] for item in db.query(column).distinct().all() if item[0] is not None])
+        return sorted([item[0] for item in db.query(column).filter(Employee.status == "Active").distinct().all() if item[0] is not None])
 
     db_employment_types = set(distinct_sorted(Employee.employment_type))
     db_statuses = set(distinct_sorted(Employee.status))

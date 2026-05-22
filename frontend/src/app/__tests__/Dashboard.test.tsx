@@ -30,7 +30,7 @@ test("renders_four_stat_cards", async () => {
 test("total_employees_stat_shows_value", async () => {
   renderDashboard();
 
-  expect(await screen.findByText("5 employees")).toBeInTheDocument();
+  expect(await screen.findByText("4 employees")).toBeInTheDocument();
 });
 
 test("avg_salary_formatted_as_currency", async () => {
@@ -58,7 +58,7 @@ test("shows_skeleton_before_data", async () => {
     http.get("http://localhost:8000/api/v1/insights/summary", async () => {
       await delay(500);
       return HttpResponse.json({
-        total_employees: 5,
+        total_employees: 4,
         active_employees: 4,
         total_salary_spend: 321000,
         global_min_salary: 42000,
